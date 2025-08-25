@@ -12,6 +12,7 @@ type Calculator struct {
 	AmountOfDice          int
 	MinimumRollForSuccess int
 	MinimumRollToExplode  int
+	MaximumExplodingRolls int
 	AmountOfRolls         int
 }
 
@@ -32,12 +33,18 @@ func (c Calculator) Calculate() iter.Seq[CalculatorOutput] {
 
 	for i := 0; i < c.AmountOfRolls; i++ {
 		rolledDice := 0
+		explodedDice := 0
 
 		for rolledDice < c.AmountOfDice {
 			roll := roll(1, c.DiceSides)
 
 			if roll >= c.MinimumRollForSuccess {
 				successCount++
+			}
+
+			if c.MaximumExplodingRolls == explodedDice {
+				rolledDice++
+				continue
 			}
 
 			if c.MinimumRollToExplode == 0 || roll < c.MinimumRollToExplode {
@@ -49,6 +56,7 @@ func (c Calculator) Calculate() iter.Seq[CalculatorOutput] {
 			AmountOfSuccess: successCount,
 		})
 		successCount = 0
+		explodedDice = 0
 	}
 
 	var output = make(map[int]CalculatorOutput)

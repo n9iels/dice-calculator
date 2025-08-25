@@ -37,7 +37,8 @@ func initialModel() model {
 			{text: "Amount of dice sides"},
 			{text: "Amount of dice"},
 			{text: "Minimum roll for a success"},
-			{text: "Minimum roll for exploding (0 to disable)"},
+			{text: "Minimum roll for exploding"},
+			{text: "Maximum exploding rolls"},
 			{text: "Amount of rolls to do for the calculation"},
 		},
 	}
@@ -47,6 +48,7 @@ func initialModel() model {
 		t = textinput.New()
 		t.PromptStyle = blurredStyle
 		t.TextStyle = blurredStyle
+		t.Placeholder = "0"
 
 		if i == 0 {
 			t.Focus()
@@ -84,13 +86,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				amountOfDice, _ := strconv.Atoi(m.questions[1].input.Value())
 				minimumRollForSuccess, _ := strconv.Atoi(m.questions[2].input.Value())
 				miniumRollToExplode, _ := strconv.Atoi(m.questions[3].input.Value())
-				amountOfRolls, _ := strconv.Atoi(m.questions[4].input.Value())
+				maximumExplodingRolls, _ := strconv.Atoi(m.questions[4].input.Value())
+				amountOfRolls, _ := strconv.Atoi(m.questions[5].input.Value())
 
 				m.calculator = calculator.Calculator{
 					DiceSides:             diceSides,
 					AmountOfDice:          amountOfDice,
 					MinimumRollForSuccess: minimumRollForSuccess,
 					MinimumRollToExplode:  miniumRollToExplode,
+					MaximumExplodingRolls: maximumExplodingRolls,
 					AmountOfRolls:         amountOfRolls,
 				}
 
@@ -106,10 +110,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.focusIndex++
 			}
 
-			if m.focusIndex > len(m.questions) {
+			if m.focusIndex >= len(m.questions) {
 				m.focusIndex = 0
 			} else if m.focusIndex < 0 {
-				m.focusIndex = len(m.questions)
+				m.focusIndex = len(m.questions) - 1
 			}
 
 			cmds := make([]tea.Cmd, len(m.questions))
