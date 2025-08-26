@@ -5,6 +5,9 @@ import (
 	"iter"
 	"maps"
 	"math/rand/v2"
+	"slices"
+	"strconv"
+	"strings"
 )
 
 type Calculator struct {
@@ -14,6 +17,7 @@ type Calculator struct {
 	MinimumRollToExplode  int
 	MaximumExplodingRolls int
 	AmountOfRolls         int
+	DiceSidesForFailure   int
 }
 
 type CalculatorOutput struct {
@@ -28,6 +32,7 @@ type calculatorResult struct {
 }
 
 func (c Calculator) Calculate() iter.Seq[CalculatorOutput] {
+	var failureDiceSidesSlice = strings.Split(strconv.Itoa(c.DiceSidesForFailure), ",")
 	var results []calculatorResult
 	successCount := 0
 
@@ -38,11 +43,16 @@ func (c Calculator) Calculate() iter.Seq[CalculatorOutput] {
 		for rolledDice < c.AmountOfDice {
 			roll := roll(1, c.DiceSides)
 
+			if slices.Contains(failureDiceSidesSlice, strconv.Itoa(roll)) {
+				successCount--
+				continue
+			}
+
 			if roll >= c.MinimumRollForSuccess {
 				successCount++
 			}
 
-			if c.MaximumExplodingRolls == explodedDice {
+			if c.MaximumExplodingRolls != 0 && c.MaximumExplodingRolls == explodedDice {
 				rolledDice++
 				continue
 			}
@@ -79,5 +89,5 @@ func (c Calculator) Calculate() iter.Seq[CalculatorOutput] {
 }
 
 func roll(min int, max int) int {
-	return rand.IntN(max+1-min) + min
+	return rand.IntN(max-min+1) + min
 }

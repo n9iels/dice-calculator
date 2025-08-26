@@ -14,8 +14,10 @@ import (
 )
 
 type question struct {
-	text  string
-	input textinput.Model
+	text         string
+	placeholder  string
+	defaultValue string
+	input        textinput.Model
 }
 
 type model struct {
@@ -34,26 +36,29 @@ var (
 func initialModel() model {
 	m := model{
 		questions: []question{
-			{text: "Amount of dice sides"},
-			{text: "Amount of dice"},
-			{text: "Minimum roll for a success"},
-			{text: "Minimum roll for exploding"},
-			{text: "Maximum exploding rolls"},
-			{text: "Amount of rolls to do for the calculation"},
+			{text: "Amount of dice sides", defaultValue: "2"},
+			{text: "Amount of dice", defaultValue: "1"},
+			{text: "Minimum roll for a success", defaultValue: "1"},
+			{text: "Dice sides for a fail (separate,by,comma)", placeholder: "none"},
+			{text: "Minimum roll for exploding", placeholder: "disabled"},
+			{text: "Maximum exploding rolls", placeholder: "infinite"},
+			{text: "Amount of rolls to do for the calculation", defaultValue: "1"},
 		},
 	}
 
 	var t textinput.Model
-	for i := range m.questions {
+	for i, q := range m.questions {
 		t = textinput.New()
 		t.PromptStyle = blurredStyle
 		t.TextStyle = blurredStyle
-		t.Placeholder = "0"
+		t.Placeholder = q.placeholder
+		t.Width = 20
+		t.SetValue(q.defaultValue)
 
 		if i == 0 {
-			t.Focus()
 			t.PromptStyle = focusedStyle
 			t.TextStyle = focusedStyle
+			t.Focus()
 		}
 
 		m.questions[i].input = t
@@ -85,9 +90,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				diceSides, _ := strconv.Atoi(m.questions[0].input.Value())
 				amountOfDice, _ := strconv.Atoi(m.questions[1].input.Value())
 				minimumRollForSuccess, _ := strconv.Atoi(m.questions[2].input.Value())
-				miniumRollToExplode, _ := strconv.Atoi(m.questions[3].input.Value())
-				maximumExplodingRolls, _ := strconv.Atoi(m.questions[4].input.Value())
-				amountOfRolls, _ := strconv.Atoi(m.questions[5].input.Value())
+				diceSidesForFailure, _ := strconv.Atoi(m.questions[3].input.Value())
+				miniumRollToExplode, _ := strconv.Atoi(m.questions[4].input.Value())
+				maximumExplodingRolls, _ := strconv.Atoi(m.questions[5].input.Value())
+				amountOfRolls, _ := strconv.Atoi(m.questions[6].input.Value())
 
 				m.calculator = calculator.Calculator{
 					DiceSides:             diceSides,
@@ -96,6 +102,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					MinimumRollToExplode:  miniumRollToExplode,
 					MaximumExplodingRolls: maximumExplodingRolls,
 					AmountOfRolls:         amountOfRolls,
+					DiceSidesForFailure:   diceSidesForFailure,
 				}
 
 				m.questions[m.focusIndex].input.Blur()
