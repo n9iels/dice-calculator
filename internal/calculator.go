@@ -2,6 +2,7 @@
 package calculator
 
 import (
+	"fmt"
 	"iter"
 	"maps"
 	"math/rand/v2"
@@ -43,8 +44,10 @@ func (c Calculator) Calculate() iter.Seq[CalculatorOutput] {
 		for rolledDice < c.AmountOfDice {
 			roll := roll(1, c.DiceSides)
 
+			fmt.Print(roll, failureDiceSidesSlice)
 			if slices.Contains(failureDiceSidesSlice, strconv.Itoa(roll)) {
 				successCount--
+				rolledDice++
 				continue
 			}
 
