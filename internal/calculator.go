@@ -2,7 +2,6 @@
 package calculator
 
 import (
-	"fmt"
 	"iter"
 	"maps"
 	"math/rand/v2"
@@ -18,7 +17,7 @@ type Calculator struct {
 	MinimumRollToExplode  int
 	MaximumExplodingRolls int
 	AmountOfRolls         int
-	DiceSidesForFailure   int
+	DiceSidesForFailure   string
 }
 
 type CalculatorOutput struct {
@@ -33,7 +32,7 @@ type calculatorResult struct {
 }
 
 func (c Calculator) Calculate() iter.Seq[CalculatorOutput] {
-	var failureDiceSidesSlice = strings.Split(strconv.Itoa(c.DiceSidesForFailure), ",")
+	var failureDiceSidesSlice = strings.Split(c.DiceSidesForFailure, ",")
 	var results []calculatorResult
 	successCount := 0
 
@@ -44,7 +43,6 @@ func (c Calculator) Calculate() iter.Seq[CalculatorOutput] {
 		for rolledDice < c.AmountOfDice {
 			roll := roll(1, c.DiceSides)
 
-			fmt.Print(roll, failureDiceSidesSlice)
 			if slices.Contains(failureDiceSidesSlice, strconv.Itoa(roll)) {
 				successCount--
 				rolledDice++

@@ -90,7 +90,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				diceSides, _ := strconv.Atoi(m.questions[0].input.Value())
 				amountOfDice, _ := strconv.Atoi(m.questions[1].input.Value())
 				minimumRollForSuccess, _ := strconv.Atoi(m.questions[2].input.Value())
-				diceSidesForFailure, _ := strconv.Atoi(m.questions[3].input.Value())
+				diceSidesForFailure := m.questions[3].input.Value()
 				miniumRollToExplode, _ := strconv.Atoi(m.questions[4].input.Value())
 				maximumExplodingRolls, _ := strconv.Atoi(m.questions[5].input.Value())
 				amountOfRolls, _ := strconv.Atoi(m.questions[6].input.Value())
